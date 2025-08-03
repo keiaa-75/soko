@@ -15,8 +15,6 @@ import jakarta.persistence.Id;
  * <p>
  * The {@code id} field is marked as the primary key and is automatically generated
  * by the database.
- * This means the database will assign an auto-incremented value when a new product
- * is inserted.
  * </p>
  *
  * <p>
