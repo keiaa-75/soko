@@ -34,25 +34,54 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-    private int quantity;
-    private double price;
+    private String itemId;
+    private String itemName;
+    private int itemQty;
+    private double itemPrice;
+    private String itemCategory;
 
     public Product() {}
 
-    public Product(String name, int quantity, double price) {
-        this.name = name;
-        this.quantity = quantity;
-        this.price = price;
+    private static class InvalidItemException extends RuntimeException {
+        public InvalidItemException(String message) {
+            super(message);
+        }
+    }
+
+    public Product(
+        String itemId,
+        String itemName,
+        int itemQty,
+        double itemPrice,
+        String itemCategory
+        ) {
+        
+        if (itemQty < 0) {
+            throw new InvalidItemException("The item quantity should not be negative.");
+        }
+
+        if (itemPrice < 0) {
+            throw new InvalidItemException("The item price should not be negative.");
+        }
+        
+        this.itemId = itemId;
+        this.itemName = itemName;
+        this.itemQty = itemQty;
+        this.itemPrice = itemPrice;
+        this.itemCategory = itemCategory;
     }
 
     public Long getId() { return id; }
-    public String getName() { return name; }
-    public int getQuantity() { return quantity; }
-    public double getPrice() { return price; }
+    public String getItemId() { return itemId; }
+    public String getItemName() { return itemName; }
+    public int getItemQty() { return itemQty; }
+    public double getItemPrice() { return itemPrice; }
+    public String getItemCategory() { return itemCategory; }
 
-    public void setId(Long id) { this.id = id; }
-    public void setName(String name) { this.name = name; }
-    public void setQuantity(int quantity) { this.quantity = quantity; }
-    public void setPrice(double price) { this.price = price; }
+    public void setId(Long newId) { this.id = newId; }
+    public void setItemId(String newItemId) { this.itemId = newItemId; }
+    public void setName(String newName) { this.itemName = newName; }
+    public void setQty(int newQty) { this.itemQty = newQty; }
+    public void setPrice(double newPrice) { this.itemPrice = newPrice; }
+    public void setCategory(String newCategory) { this.itemCategory = newCategory; }
 }
