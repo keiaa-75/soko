@@ -1,7 +1,8 @@
 package com.keiaa.soko.repository;
 
-import com.keiaa.soko.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.keiaa.soko.model.Product;
 
 /**
  * Repository interface for managing {@link Product} entities.
