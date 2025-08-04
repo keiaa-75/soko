@@ -51,11 +51,29 @@ The backend exposes the following RESTful endpoints under the base path `/api/pr
 
 | Method | Endpoint                                       | Description                               |
 |--------|------------------------------------------------|-------------------------------------------|
-| `GET`    | `/`                                            | Get a list of all products.               |
+| `GET`    | `/`                                            | Get a list of all products. Supports filtering, sorting, and searching via query parameters. |
 | `GET`    | `/{id}`                                        | Get a single product by its ID.           |
 | `POST`   | `/`                                            | Create a new product.                     |
 | `PUT`    | `/{id}`                                        | Update an existing product.               |
 | `DELETE` | `/{id}`                                        | Delete a product by its ID.               |
-| `GET`    | `/search?name={name}`                          | Search for products by name.              |
-| `GET`    | `/sort?by={id,name,price}&order={asc,desc}`    | Sort products by ID, name, or price.      |
-| `GET`    | `/filter?category={...}&minPrice={...}`        | Filter products by various criteria.      |
+
+### Querying Products
+
+The `GET /api/products` endpoint supports combining the following query parameters for powerful and flexible queries.
+
+| Parameter | Example | Description |
+|---|---|---|
+| `name` | `?name=Book` | Search for products where the name contains the given string (case-insensitive). |
+| `category` | `?category=Electronics` | Filter products by an exact category match. |
+| `minPrice` | `?minPrice=50` | Filter for products with a price greater than or equal to this value. |
+| `maxPrice` | `?maxPrice=200` | Filter for products with a price less than or equal to this value. |
+| `sortBy` | `?sortBy=price` | The field to sort by. Valid options: `id`, `name`, `price`. Defaults to `id`. |
+| `sortOrder` | `?sortOrder=desc` | The sort direction. Valid options: `asc` (default), `desc`. |
+
+**Example of a Combined Query:**
+
+To find all products in the "Books" category with "Java" in their name, priced under $50, and sorted by price in ascending order, you would use the following request:
+
+```
+GET /api/products?name=Java&category=Books&maxPrice=50&sortBy=price&sortOrder=asc
+```

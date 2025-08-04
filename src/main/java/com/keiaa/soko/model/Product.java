@@ -42,12 +42,6 @@ public class Product {
 
     public Product() {}
 
-    private static class InvalidItemException extends RuntimeException {
-        public InvalidItemException(String message) {
-            super(message);
-        }
-    }
-
     public Product(
         String itemId,
         String itemName,
@@ -57,11 +51,11 @@ public class Product {
         ) {
         
         if (itemQty < 0) {
-            throw new InvalidItemException("The item quantity should not be negative.");
+            throw new IllegalArgumentException("The item quantity should not be negative.");
         }
 
         if (itemPrice < 0) {
-            throw new InvalidItemException("The item price should not be negative.");
+            throw new IllegalArgumentException("The item price should not be negative.");
         }
         
         this.itemId = itemId;
@@ -81,7 +75,17 @@ public class Product {
     public void setId(Long newId) { this.id = newId; }
     public void setItemId(String newItemId) { this.itemId = newItemId; }
     public void setItemName(String newName) { this.itemName = newName; }
-    public void setItemQty(int newQty) { this.itemQty = newQty; }
-    public void setItemPrice(double newPrice) { this.itemPrice = newPrice; }
+    public void setItemQty(int newQty) {
+        if (newQty < 0) {
+            throw new IllegalArgumentException("The item quantity should not be negative.");
+        }
+        this.itemQty = newQty;
+    }
+    public void setItemPrice(double newPrice) {
+        if (newPrice < 0) {
+            throw new IllegalArgumentException("The item price should not be negative.");
+        }
+        this.itemPrice = newPrice;
+    }
     public void setItemCategory(String newCategory) { this.itemCategory = newCategory; }
 }
