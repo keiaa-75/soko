@@ -146,4 +146,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('addProductForm').addEventListener('submit', addProduct);
     document.getElementById('editProductForm').addEventListener('submit', saveProductChanges);
+
+    // --- Theme Toggling Logic ---
+    const themingSwitcher = document.getElementById('themingSwitcher');
+
+    // Function to get the current theme from the <html> attribute
+    const getCurrentTheme = () => document.documentElement.getAttribute('data-bs-theme');
+
+    // Set the switch to the correct initial state based on the theme
+    if (getCurrentTheme() === 'dark') {
+        themingSwitcher.checked = true;
+    }
+
+    // Listen for changes on the switch
+    themingSwitcher.addEventListener('change', () => {
+        const newTheme = themingSwitcher.checked ? 'dark' : 'light';
+        // Set the new theme on the <html> element
+        document.documentElement.setAttribute('data-bs-theme', newTheme);
+        // Save the user's preference to local storage
+        localStorage.setItem('theme', newTheme);
+    });
 });
