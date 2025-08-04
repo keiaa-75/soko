@@ -49,6 +49,9 @@ public class ProductService {
                 case "price":
                     sortField = "itemPrice";
                     break;
+                case "quantity":
+                    sortField = "itemQty";
+                    break;
                 case "id":
                 default:
                     sortField = "id";
