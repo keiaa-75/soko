@@ -44,9 +44,49 @@ async function deleteProduct(id) {
 }
 
 // Edit modal logic (implement modal in HTML)
-function showEditModal(id) {
-    // Fetch product, populate modal, show modal
-    // On save, send PUT request to /api/products/{id}
+async function showEditModal(id) {
+    const res = await fetch(`/api/products/${id}`);
+    const product = await res.json();
+
+    document.getElementById('editProductId').value = product.id;
+    document.getElementById('editItemId').value = product.itemId;
+    document.getElementById('editName').value = product.itemName;
+    document.getElementById('editQuantity').value = product.itemQty;
+    document.getElementById('editPrice').value = product.itemPrice;
+    document.getElementById('editCategory').value = product.itemCategory;
+
+    const editProductModal = new bootstrap.Modal(document.getElementById('editProductModal'));
+    editProductModal.show();
+}
+
+async function saveProductChanges(e) {
+    e.preventDefault();
+    const id = document.getElementById('editProductId').value;
+    const itemId = document.getElementById('editItemId').value;
+    const itemName = document.getElementById('editName').value;
+    const itemQty = document.getElementById('editQuantity').value;
+    const itemPrice = document.getElementById('editPrice').value;
+    const itemCategory = document.getElementById('editCategory').value;
+
+    await fetch(`/api/products/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            itemId,
+            itemName,
+            itemQty,
+            itemPrice,
+            itemCategory
+        })
+    });
+
+    const editProductModalEl = document.getElementById('editProductModal');
+    const editProductModal = bootstrap.Modal.getInstance(editProductModalEl);
+    editProductModal.hide();
+
+    fetchProducts();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -60,4 +100,5 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchProducts('/sort?by=price&order=' + val);
     });
     document.getElementById('addProductForm').addEventListener('submit', addProduct);
+    document.getElementById('editProductForm').addEventListener('submit', saveProductChanges);
 });
