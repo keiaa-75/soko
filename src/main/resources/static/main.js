@@ -39,8 +39,10 @@ async function addProduct(e) {
 }
 
 async function deleteProduct(id) {
-    await fetch(`/api/products/${id}`, { method: 'DELETE' });
-    fetchProducts();
+    if (confirm('Are you sure you want to delete this product?')) {
+        await fetch(`/api/products/${id}`, { method: 'DELETE' });
+        fetchProducts();
+    }
 }
 
 // Edit modal logic (implement modal in HTML)
