@@ -2,7 +2,7 @@
 
 **Sōko** (倉庫) means "warehouse" in Japanese. I'm out of name ideas.
 
-This project is a simple, responsive web application designed for managing a product inventory. It's a **full-stack application**, built with Spring Boot, JavaScript, and Bootstrap 5, that showcases **RESTful API** services and a clean, **mobile-first** user interface.
+This is a simple, responsive web application for managing a product inventory. It is built with Spring Boot, H2 Database, JavaScript, and Bootstrap 5. The project demonstrates a full-stack application with RESTful API services and a mobile-first user interface.
 
 ## Features
 
