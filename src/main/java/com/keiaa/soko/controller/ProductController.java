@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.keiaa.soko.model.Product;
 import com.keiaa.soko.repository.ProductRepository;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 /**
  * ProductController
@@ -64,4 +66,27 @@ public class ProductController {
     public void deleteProduct(@PathVariable Long id) {
         productRepository.deleteById(id);
     }
+
+    @GetMapping("/search")
+    public List<Product> searchProducts(@RequestParam String name) {
+        return productRepository.findByItemNameContainingIgnoreCase(name);
+    }
+    
+    @GetMapping("/filter")
+    public List<Product> filterProducts(
+        @RequestParam(required = false) String category,
+        @RequestParam(required = false) Double minPrice,
+        @RequestParam(required = false) Double maxPrice
+        ) {
+        return productRepository.filterProducts(category, minPrice, maxPrice);
+    }
+    
+    @GetMapping("/sort")
+    public List<Product> sortProducts(@RequestParam String by, @RequestParam String order) {
+        if ("price".equals(by)) {
+            return "asc".equals(order) ? productRepository.findAllByOrderByItemPriceAsc() : productRepository.findAllByOrderByItemPriceDesc();
+        }
+        return productRepository.findAll();
+    }
+    
 }

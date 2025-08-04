@@ -80,8 +80,8 @@ public class Product {
 
     public void setId(Long newId) { this.id = newId; }
     public void setItemId(String newItemId) { this.itemId = newItemId; }
-    public void setName(String newName) { this.itemName = newName; }
-    public void setQty(int newQty) { this.itemQty = newQty; }
-    public void setPrice(double newPrice) { this.itemPrice = newPrice; }
-    public void setCategory(String newCategory) { this.itemCategory = newCategory; }
+    public void setItemName(String newName) { this.itemName = newName; }
+    public void setItemQty(int newQty) { this.itemQty = newQty; }
+    public void setItemPrice(double newPrice) { this.itemPrice = newPrice; }
+    public void setItemCategory(String newCategory) { this.itemCategory = newCategory; }
 }
