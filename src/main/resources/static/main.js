@@ -146,6 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('addProductForm').addEventListener('submit', addProduct);
     document.getElementById('editProductForm').addEventListener('submit', saveProductChanges);
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
 
     // --- Theme Toggling Logic ---
     const themingSwitcher = document.getElementById('themingSwitcher');

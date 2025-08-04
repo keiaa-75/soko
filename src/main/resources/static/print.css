@@ -1,0 +1,41 @@
+@media print {
+
+    /* Hide all non-essential elements */
+    nav,
+    .card.mb-4, /* Filter/Sort controls */
+    .card.mt-4, /* Add Product form */
+    .modal,
+    .modal-backdrop,
+    #productsTable th:last-child, /* Actions column header */
+    #productsTable td:last-child, /* Actions column cells */
+    #aboutModal,
+    #editProductModal {
+        display: none !important;
+    }
+
+    /* General print styles for readability */
+    body {
+        font-size: 10pt;
+        background-color: #fff !important; /* Ensure white background */
+        color: #000 !important; /* Ensure black text */
+    }
+
+    /* Ensure the main content and table take up the full width */
+    .container,
+    main.container {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    .table, .table th, .table td {
+        border: 1px solid #dee2e6 !important; /* Ensure table borders are visible */
+        color: #000 !important;
+    }
+}
