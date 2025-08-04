@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Soko Inventory</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container py-4">
+    <h1>Soko Inventory</h1>
+
+    <!-- Product Table -->
+    <table class="table table-bordered mt-4" id="productsTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        <!-- Products will be loaded here -->
+        </tbody>
+    </table>
+
+    <!-- Add Product Form -->
+    <form id="addProductForm" class="row g-3">
+        <div class="col-md-3">
+            <input type="text" class="form-control" id="name" placeholder="Product Name" required>
+        </div>
+        <div class="col-md-2">
+            <input type="number" class="form-control" id="quantity" placeholder="Quantity" required>
+        </div>
+        <div class="col-md-2">
+            <input type="number" class="form-control" id="price" placeholder="Price" step="0.01" required>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">Add Product</button>
+        </div>
+    </form>
+</div>
+
+<script>
+async function fetchProducts() {
+    const res = await fetch('/api/products');
+    const products = await res.json();
+    const tbody = document.querySelector('#productsTable tbody');
+    tbody.innerHTML = '';
+    products.forEach(prod => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${prod.id}</td>
+                <td>${prod.name}</td>
+                <td>${prod.quantity}</td>
+                <td>${prod.price}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm" onclick="deleteProduct(${prod.id})">Delete</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+async function addProduct(e) {
+    e.preventDefault();
+    const name = document.getElementById('name').value;
+    const quantity = document.getElementById('quantity').value;
+    const price = document.getElementById('price').value;
+    await fetch('/api/products', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({name, quantity, price})
+    });
+    e.target.reset();
+    fetchProducts();
+}
+
+async function deleteProduct(id) {
+    await fetch(`/api/products/${id}`, { method: 'DELETE' });
+    fetchProducts();
+}
+
+document.getElementById('addProductForm').addEventListener('submit', addProduct);
+window.onload = fetchProducts;
+</script>
+</body>
+</html>
