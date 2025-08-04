@@ -39,4 +39,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllByOrderByItemIdDesc();
     List<Product> findAllByOrderByItemNameAsc();
     List<Product> findAllByOrderByItemNameDesc();
+
+    @Query("SELECT DISTINCT p.itemCategory FROM Product p ORDER BY p.itemCategory")
+    List<String> findDistinctItemCategories();
 }

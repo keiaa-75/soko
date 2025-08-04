@@ -10,7 +10,8 @@ This is a simple, responsive web application for managing a product inventory. I
 - **Add Products**: Add new products through a simple form.
 - **Delete Products**: Remove products from the inventory.
 - **Search**: Dynamically search for products by name.
-- **Sort**: Sort the product list by price (ascending or descending).
+- **Sort**: Sort the product list by ID, name, or price.
+- **Filter**: Filter products by category.
 
 ## Getting Started
 

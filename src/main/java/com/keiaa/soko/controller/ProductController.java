@@ -96,5 +96,10 @@ public class ProductController {
                 return productRepository.findAll();
         }
     }
+
+    @GetMapping("/categories")
+    public List<String> getCategories() {
+        return productRepository.findDistinctItemCategories();
+    }
     
 }

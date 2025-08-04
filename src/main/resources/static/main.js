@@ -89,8 +89,28 @@ async function saveProductChanges(e) {
     fetchProducts();
 }
 
+async function populateCategories() {
+    try {
+        const res = await fetch('/api/products/categories');
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        const categories = await res.json();
+        const select = document.getElementById('categoryFilterSelect');
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category;
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Could not fetch categories:", error);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     fetchProducts();
+    populateCategories();
     document.getElementById('searchInput').addEventListener('input', function() {
         const val = this.value;
         fetchProducts('/search?name=' + encodeURIComponent(val));
@@ -99,6 +119,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const value = this.value;
         const [by, order] = value.split('_');
         fetchProducts(`/sort?by=${by}&order=${order}`);
+    });
+    document.getElementById('categoryFilterSelect').addEventListener('change', function() {
+        const category = this.value;
+        if (category) {
+            fetchProducts('/filter?category=' + encodeURIComponent(category));
+        } else {
+            fetchProducts(); // Fetch all products if "All Categories" is selected
+        }
     });
     document.getElementById('addProductForm').addEventListener('submit', addProduct);
     document.getElementById('editProductForm').addEventListener('submit', saveProductChanges);
