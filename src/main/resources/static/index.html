@@ -2,65 +2,110 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Soko</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory</title>
     <script src="main.js" defer></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <header class="bg-primary-text-white py-4 mb-4 w-100">
-        <div class="container-fluid">
-            <h1 class="display-5">Inventory Demo</h1>
+    <!-- Header -->
+    <header class="bg-dark text-light p-3 shadow-sm mb-4">
+        <div class="container">
+            <h1>Inventory Demo</h1>
         </div>
     </header>
-    <div class="row mb-3">
-        <div class="col-12 col-md-6 mb-2 mb-md-0">
-            <input type="text" class="form-control" id="searchInput" placeholder="Search by name">
-        </div>
-        <div class="col-12 col-md-6">
-            <select class="form-select" id="sortSelect">
-                <option value="asc">Sort by Price: Low to High</option>
-                <option value="desc">Sort by Price: High to Low</option>
-            </select>
-        </div>
-    </div>
-    <div class="container py-4">
+
+    <!-- Main Content -->
+    <main class="container py-4">
+
+        <!-- Controls: Search and Sort -->
+        <section class="card mb-4">
+            <div class="card-body">
+                <div class="row g-3 align-items-center">
+                    <div class="col-lg-8">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Search by product name...">
+                    </div>
+                    <div class="col-lg-4">
+                        <select class="form-select" id="sortSelect">
+                            <option selected disabled>Sort by...</option>
+                            <option value="asc">Price: Low to High</option>
+                            <option value="desc">Price: High to Low</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Product Table -->
-        <table class="table table-bordered mt-4" id="productsTable">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Products will be loaded here -->
-            </tbody>
-        </table>
-        
+        <section class="card">
+            <div class="card-header">
+                <h3>Product List</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="productsTable">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Category</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Products will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
         <!-- Add Product Form -->
-        <form id="addProductForm" class="row g-3">
-            <div class="col-md-2">
-                <input type="text" class="form-control" id="itemId" placeholder="Product Code" required>
+        <section class="card mt-4">
+            <div class="card-header">
+                <h3>Add New Product</h3>
             </div>
-            <div class="col-md-2">
-                <input type="text" class="form-control" id="name" placeholder="Product Name" required>
+            <div class="card-body">
+                <form id="addProductForm">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="itemId" class="form-label">Product Code</label>
+                            <input type="text" class="form-control" id="itemId" placeholder="e.g., SKU123" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="name" class="form-label">Product Name</label>
+                            <input type="text" class="form-control" id="name" placeholder="e.g., Wireless Mouse" required>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label for="quantity" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="quantity" placeholder="e.g., 50" required min="0">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="price" class="form-label">Price</label>
+                            <input type="number" class="form-control" id="price" placeholder="e.g., 29.99" step="0.01" required min="0">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="category" class="form-label">Category</label>
+                            <input type="text" class="form-control" id="category" placeholder="e.g., Electronics" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-3">Add Product</button>
+                </form>
             </div>
-            <div class="col-md-2">
-                <input type="number" class="form-control" id="quantity" placeholder="Quantity" required>
-            </div>
-            <div class="col-md-2">
-                <input type="number" class="form-control" id="price" placeholder="Price" step="0.01" required>
-            </div>
-            <div class="col-md-2">
-                <input type="text" class="form-control" id="category" placeholder="Category" required>
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary w-100">Add Product</button>
-            </div>
-        </form>
-    </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center text-muted py-4 mt-4 bg-light">
+        <div class="container">
+            <p>&copy; 2025 Keiaa. Licensed under the MIT License.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

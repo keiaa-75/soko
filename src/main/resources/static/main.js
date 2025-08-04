@@ -10,9 +10,12 @@ async function fetchProducts(params = '') {
                 <td>${prod.itemName}</td>
                 <td>${prod.itemQty}</td>
                 <td>${prod.itemPrice}</td>
+                <td>${prod.itemCategory}</td>
                 <td>
-                    <button class="btn btn-warning btn-sm" onclick="showEditModal(${prod.id})">Edit</button>
-                    <button class="btn btn-danger btn-sm" onclick="deleteProduct(${prod.id})">Delete</button>
+                    <div class="d-flex flex-column flex-md-row gap-2">
+                        <button class="btn btn-warning btn-sm" onclick="showEditModal(${prod.id})">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteProduct(${prod.id})">Delete</button>
+                    </div>
                 </td>
             </tr>
         `;
