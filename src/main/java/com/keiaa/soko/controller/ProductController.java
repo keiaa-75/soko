@@ -83,10 +83,18 @@ public class ProductController {
     
     @GetMapping("/sort")
     public List<Product> sortProducts(@RequestParam String by, @RequestParam String order) {
-        if ("price".equals(by)) {
-            return "asc".equals(order) ? productRepository.findAllByOrderByItemPriceAsc() : productRepository.findAllByOrderByItemPriceDesc();
+        boolean isAsc = "asc".equalsIgnoreCase(order);
+
+        switch (by.toLowerCase()) {
+            case "price":
+                return isAsc ? productRepository.findAllByOrderByItemPriceAsc() : productRepository.findAllByOrderByItemPriceDesc();
+            case "id":
+                return isAsc ? productRepository.findAllByOrderByItemIdAsc() : productRepository.findAllByOrderByItemIdDesc();
+            case "name":
+                return isAsc ? productRepository.findAllByOrderByItemNameAsc() : productRepository.findAllByOrderByItemNameDesc();
+            default:
+                return productRepository.findAll();
         }
-        return productRepository.findAll();
     }
     
 }

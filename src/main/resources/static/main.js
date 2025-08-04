@@ -96,8 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchProducts('/search?name=' + encodeURIComponent(val));
     });
     document.getElementById('sortSelect').addEventListener('change', function() {
-        const val = this.value;
-        fetchProducts('/sort?by=price&order=' + val);
+        const value = this.value;
+        const [by, order] = value.split('_');
+        fetchProducts(`/sort?by=${by}&order=${order}`);
     });
     document.getElementById('addProductForm').addEventListener('submit', addProduct);
     document.getElementById('editProductForm').addEventListener('submit', saveProductChanges);

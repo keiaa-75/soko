@@ -56,5 +56,5 @@ The backend exposes the following RESTful endpoints under the base path `/api/pr
 | `PUT`    | `/{id}`                                        | Update an existing product.               |
 | `DELETE` | `/{id}`                                        | Delete a product by its ID.               |
 | `GET`    | `/search?name={name}`                          | Search for products by name.              |
-| `GET`    | `/sort?by=price&order={asc/desc}`              | Sort products by price.                   |
+| `GET`    | `/sort?by={id,name,price}&order={asc,desc}`    | Sort products by ID, name, or price.      |
 | `GET`    | `/filter?category={...}&minPrice={...}`        | Filter products by various criteria.      |
