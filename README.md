@@ -11,7 +11,6 @@ This is a simple, responsive web application for managing a product inventory. I
 - **Delete Products**: Remove products from the inventory.
 - **Search**: Dynamically search for products by name.
 - **Sort**: Sort the product list by price (ascending or descending).
-- **Responsive UI**: The user interface is built with Bootstrap 5 and is optimized for both desktop and mobile devices.
 
 ## Getting Started
 
