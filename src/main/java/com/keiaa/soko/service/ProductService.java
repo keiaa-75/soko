@@ -39,9 +39,24 @@ public class ProductService {
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
 
-        // Define sort order, defaulting to 'id' and 'asc'
-        List<String> validSortFields = List.of("id", "itemId", "itemName", "itemPrice", "itemQty", "itemCategory");
-        String sortField = (sortBy != null && validSortFields.contains(sortBy)) ? sortBy : "id";
+        // Define sort order, mapping frontend values to backend fields
+        String sortField;
+        if (sortBy != null) {
+            switch (sortBy.toLowerCase()) {
+                case "name":
+                    sortField = "itemName";
+                    break;
+                case "price":
+                    sortField = "itemPrice";
+                    break;
+                case "id":
+                default:
+                    sortField = "id";
+                    break;
+            }
+        } else {
+            sortField = "id";
+        }
         Sort.Direction direction = "desc".equalsIgnoreCase(sortOrder) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Sort sort = Sort.by(direction, sortField);
 
