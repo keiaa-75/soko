@@ -35,13 +35,13 @@ async function addProduct(e) {
         body: JSON.stringify({itemId, itemName, itemQty, itemPrice, itemCategory})
     });
     e.target.reset();
-    fetchProducts();
+    applyFiltersAndFetch(); // Refresh with current filters
 }
 
 async function deleteProduct(id) {
     if (confirm('Are you sure you want to delete this product?')) {
         await fetch(`/api/products/${id}`, { method: 'DELETE' });
-        fetchProducts();
+        applyFiltersAndFetch(); // Refresh with current filters
     }
 }
 
@@ -88,7 +88,7 @@ async function saveProductChanges(e) {
     const editProductModal = bootstrap.Modal.getInstance(editProductModalEl);
     editProductModal.hide();
 
-    fetchProducts();
+    applyFiltersAndFetch(); // Refresh with current filters
 }
 
 async function populateCategories() {
@@ -110,26 +110,40 @@ async function populateCategories() {
     }
 }
 
+function applyFiltersAndFetch() {
+    const params = new URLSearchParams();
+
+    const name = document.getElementById('searchInput').value;
+    if (name) {
+        params.append('name', name);
+    }
+
+    const sortValue = document.getElementById('sortSelect').value;
+    if (sortValue) {
+        const [sortBy, sortOrder] = sortValue.split('_');
+        params.append('sortBy', sortBy);
+        params.append('sortOrder', sortOrder);
+    }
+
+    const category = document.getElementById('categoryFilterSelect').value;
+    if (category) {
+        params.append('category', category);
+    }
+
+    const queryString = params.toString();
+    // Pass the built query string to fetchProducts
+    fetchProducts(queryString ? `?${queryString}` : '');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    fetchProducts();
+    applyFiltersAndFetch(); // Initial fetch with default filters
     populateCategories();
-    document.getElementById('searchInput').addEventListener('input', function() {
-        const val = this.value;
-        fetchProducts('/search?name=' + encodeURIComponent(val));
-    });
-    document.getElementById('sortSelect').addEventListener('change', function() {
-        const value = this.value;
-        const [by, order] = value.split('_');
-        fetchProducts(`/sort?by=${by}&order=${order}`);
-    });
-    document.getElementById('categoryFilterSelect').addEventListener('change', function() {
-        const category = this.value;
-        if (category) {
-            fetchProducts('/filter?category=' + encodeURIComponent(category));
-        } else {
-            fetchProducts(); // Fetch all products if "All Categories" is selected
-        }
-    });
+
+    // Centralize event handling
+    document.getElementById('searchInput').addEventListener('input', applyFiltersAndFetch);
+    document.getElementById('sortSelect').addEventListener('change', applyFiltersAndFetch);
+    document.getElementById('categoryFilterSelect').addEventListener('change', applyFiltersAndFetch);
+
     document.getElementById('addProductForm').addEventListener('submit', addProduct);
     document.getElementById('editProductForm').addEventListener('submit', saveProductChanges);
 });

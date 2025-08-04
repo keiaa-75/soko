@@ -2,19 +2,12 @@ package com.keiaa.soko.controller;
 
 import java.util.List;
 
+import com.keiaa.soko.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import com.keiaa.soko.model.Product;
-import com.keiaa.soko.repository.ProductRepository;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 /**
@@ -39,67 +32,44 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ProductController {
     
     @Autowired
-    private ProductRepository productRepository;
+    private ProductService productService;
 
     @GetMapping
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<Product> getProducts(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
+        return productService.findProducts(name, category, minPrice, maxPrice, sortBy, sortOrder);
     }
 
     @GetMapping("/{id}")
-    public Product geProduct(@PathVariable Long id) {
-        return productRepository.findById(id).orElse(null);
+    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+        return productService.getProductById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public Product createProduct(@RequestBody Product product) {
-        return productRepository.save(product);
+        return productService.addProduct(product);
     }
 
     @PutMapping("/{id}")
     public Product updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        product.setId(id);        
-        return productRepository.save(product);
+        return productService.updateProduct(id, product);
     }
     
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable Long id) {
-        productRepository.deleteById(id);
-    }
-
-    @GetMapping("/search")
-    public List<Product> searchProducts(@RequestParam String name) {
-        return productRepository.findByItemNameContainingIgnoreCase(name);
-    }
-    
-    @GetMapping("/filter")
-    public List<Product> filterProducts(
-        @RequestParam(required = false) String category,
-        @RequestParam(required = false) Double minPrice,
-        @RequestParam(required = false) Double maxPrice
-        ) {
-        return productRepository.filterProducts(category, minPrice, maxPrice);
-    }
-    
-    @GetMapping("/sort")
-    public List<Product> sortProducts(@RequestParam String by, @RequestParam String order) {
-        boolean isAsc = "asc".equalsIgnoreCase(order);
-
-        switch (by.toLowerCase()) {
-            case "price":
-                return isAsc ? productRepository.findAllByOrderByItemPriceAsc() : productRepository.findAllByOrderByItemPriceDesc();
-            case "id":
-                return isAsc ? productRepository.findAllByOrderByItemIdAsc() : productRepository.findAllByOrderByItemIdDesc();
-            case "name":
-                return isAsc ? productRepository.findAllByOrderByItemNameAsc() : productRepository.findAllByOrderByItemNameDesc();
-            default:
-                return productRepository.findAll();
-        }
+        productService.deleteProduct(id);
     }
 
     @GetMapping("/categories")
     public List<String> getCategories() {
-        return productRepository.findDistinctItemCategories();
+        return productService.getAllCategories();
     }
     
 }

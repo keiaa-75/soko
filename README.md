@@ -68,7 +68,7 @@ curl -X GET http://localhost:9090/api/products
 | `category`  | `?category=Electronics` | Filter products by an exact category match.                                    |
 | `minPrice`  | `?minPrice=50`          | Filter for products with a price greater than or equal to this value.          |
 | `maxPrice`  | `?maxPrice=200`         | Filter for products with a price less than or equal to this value.             |
-| `sortBy`    | `?sortBy=price`         | The field to sort by. Valid options: `id`, `name`, `price`. Defaults to `id`.    |
+| `sortBy`    | `?sortBy=price`         | The field to sort by. Valid options: `id`, `name`, `price`, `quantity`. Defaults to `id`. |
 | `sortOrder` | `?sortOrder=desc`       | The sort direction. Valid options: `asc` (default), `desc`.                    |
 
 **Example of a Combined Query**
