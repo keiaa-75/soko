@@ -1,25 +1,31 @@
 async function fetchProducts(params = '') {
-    const res = await fetch('/api/products' + params);
-    const products = await res.json();
-    const tbody = document.querySelector('#productsTable tbody');
-    tbody.innerHTML = '';
-    products.forEach(prod => {
-        tbody.innerHTML += `
-            <tr>
-                <td>${prod.itemId}</td>
-                <td>${prod.itemName}</td>
-                <td>${prod.itemQty}</td>
-                <td>${prod.itemPrice}</td>
-                <td>${prod.itemCategory}</td>
-                <td>
-                    <div class="d-flex flex-column flex-md-row gap-2">
-                        <button class="btn btn-warning btn-sm" onclick="showEditModal(${prod.id})">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteProduct(${prod.id})">Delete</button>
-                    </div>
-                </td>
-            </tr>
-        `;
-    });
+    try {
+        const res = await fetch('/api/products' + params);
+        if (!res.ok) throw new Error(`Failed to fetch products: ${res.statusText}`);
+        const products = await res.json();
+        const tbody = document.querySelector('#productsTable tbody');
+        const rows = products.map(prod => `
+                <tr>
+                    <td>${prod.itemId}</td>
+                    <td>${prod.itemName}</td>
+                    <td>${prod.itemQty}</td>
+                    <td>${prod.itemPrice.toFixed(2)}</td>
+                    <td>${prod.itemCategory}</td>
+                    <td>
+                        <div class="d-flex flex-column flex-md-row gap-2">
+                            <button class="btn btn-warning btn-sm" onclick="showEditModal(${prod.id})">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteProduct(${prod.id})">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        tbody.innerHTML = rows;
+    } catch (error) {
+        console.error("Error fetching products:", error);
+        // Optionally, display an error message to the user on the page
+        const tbody = document.querySelector('#productsTable tbody');
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Could not load products. Please try again later.</td></tr>`;
+    }
 }
 
 async function addProduct(e) {
@@ -29,13 +35,18 @@ async function addProduct(e) {
     const itemQty = document.getElementById('quantity').value;
     const itemPrice = document.getElementById('price').value;
     const itemCategory = document.getElementById('category').value;
-    await fetch('/api/products', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({itemId, itemName, itemQty, itemPrice, itemCategory})
-    });
-    e.target.reset();
-    applyFiltersAndFetch(); // Refresh with current filters
+    try {
+        await fetch('/api/products', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({itemId, itemName, itemQty, itemPrice, itemCategory})
+        });
+        e.target.reset();
+        applyFiltersAndFetch(); // Refresh with current filters
+    } catch (error) {
+        console.error("Error adding product:", error);
+        alert("Failed to add product. Please check the console for details.");
+    }
 }
 
 async function deleteProduct(id) {
