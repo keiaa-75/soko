@@ -3,6 +3,7 @@ package com.keiaa.soko.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -26,7 +27,7 @@ import com.keiaa.soko.model.Product;
  * @see org.springframework.data.jpa.repository.JpaRepository
  * @see com.keiaa.soko.model.Product
  */
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
     List<Product> findByItemNameContainingIgnoreCase(String itemName);
 
     @Query("SELECT p FROM Product p WHERE (:category IS NULL OR p.itemCategory = :category) AND (:minPrice IS NULL OR p.itemPrice >= :minPrice) AND (:maxPrice IS NULL OR p.itemPrice <= :maxPrice)")
