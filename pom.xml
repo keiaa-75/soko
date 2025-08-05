@@ -17,7 +17,11 @@
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
-
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>1.14.1</version>
+		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>

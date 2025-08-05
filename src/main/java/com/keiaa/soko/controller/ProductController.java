@@ -2,12 +2,15 @@ package com.keiaa.soko.controller;
 
 import java.util.List;
 
+import com.keiaa.soko.service.CsvExportService;
 import com.keiaa.soko.service.ProductService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.keiaa.soko.model.Product;
+import java.io.IOException;
 
 
 /**
@@ -33,6 +36,9 @@ public class ProductController {
     
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private CsvExportService csvExportService;
 
     @GetMapping
     public List<Product> getProducts(
@@ -71,5 +77,19 @@ public class ProductController {
     public List<String> getCategories() {
         return productService.getAllCategories();
     }
-    
+
+    @GetMapping("/export")
+    public void exportProductsToCsv(
+            HttpServletResponse response,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String sortOrder) throws IOException {
+
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=\"products.csv\"");
+        csvExportService.writeProductsToCsv(response.getWriter(), name, category, minPrice, maxPrice, sortBy, sortOrder);
+    }
 }

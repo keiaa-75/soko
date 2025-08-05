@@ -121,13 +121,11 @@ async function populateCategories() {
     }
 }
 
-function applyFiltersAndFetch() {
+function buildFilterQueryString() {
     const params = new URLSearchParams();
 
     const name = document.getElementById('searchInput').value;
-    if (name) {
-        params.append('name', name);
-    }
+    if (name) params.append('name', name);
 
     const sortValue = document.getElementById('sortSelect').value;
     if (sortValue) {
@@ -137,13 +135,19 @@ function applyFiltersAndFetch() {
     }
 
     const category = document.getElementById('categoryFilterSelect').value;
-    if (category) {
-        params.append('category', category);
-    }
+    if (category) params.append('category', category);
 
-    const queryString = params.toString();
-    // Pass the built query string to fetchProducts
+    return params.toString();
+}
+
+function applyFiltersAndFetch() {
+    const queryString = buildFilterQueryString();
     fetchProducts(queryString ? `?${queryString}` : '');
+}
+
+function exportToCsv() {
+    const queryString = buildFilterQueryString();
+    window.location.href = `/api/products/export${queryString ? `?${queryString}` : ''}`;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -158,6 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('addProductForm').addEventListener('submit', addProduct);
     document.getElementById('editProductForm').addEventListener('submit', saveProductChanges);
     document.getElementById('printBtn').addEventListener('click', () => window.print());
+    document.getElementById('exportBtn').addEventListener('click', exportToCsv);
 
     // --- Theme Toggling Logic ---
     const themingSwitcher = document.getElementById('themingSwitcher');
