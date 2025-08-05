@@ -3,6 +3,7 @@ package com.keiaa.soko.service;
 import com.keiaa.soko.model.Product;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.QuoteMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,14 @@ public class CsvExportService {
 
         String[] headers = {"ID", "Item ID", "Name", "Quantity", "Price", "Category"};
 
-        try (CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(headers))) {
+        // Define the desired CSV format, using a semicolon delimiter and quoting all fields.
+        CSVFormat format = CSVFormat.DEFAULT.builder()
+                .setHeader(headers)
+                .setDelimiter(';')
+                .setQuoteMode(QuoteMode.ALL)
+                .get();
+
+        try (CSVPrinter csvPrinter = new CSVPrinter(writer, format)) {
             for (Product product : products) {
                 csvPrinter.printRecord(
                     product.getId(),
@@ -35,4 +43,3 @@ public class CsvExportService {
         }
     }
 }
-
