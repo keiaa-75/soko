@@ -29,6 +29,16 @@
         .product-row:hover {
             cursor: pointer;
         }
+
+        /* Style for the collapsible section icon */
+        .collapse-icon {
+            transition: transform 0.2s ease-in-out;
+            font-size: 1rem; /* Keep icon size independent of the header */
+        }
+        /* Rotate icon when the section is collapsed */
+        [aria-expanded="false"] .collapse-icon {
+            transform: rotate(-90deg);
+        }
     </style>
 </head>
 <body>
@@ -62,29 +72,39 @@
         
         <!-- Controls: Search and Sort -->
         <section class="card mb-4">
-            <div class="card-body">
-                <div class="row g-3 align-items-center">
-                    <div class="col-lg-6">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Search by product name...">
-                    </div>
-                    <div class="col-lg-3">
-                        <select class="form-select" id="sortSelect">
-                            <option selected disabled>Sort by...</option>
-                            <option value="price_asc">Price: Low to High</option>
-                            <option value="price_desc">Price: High to Low</option>
-                            <option value="quantity_asc">Quantity: Low to High</option>
-                            <option value="quantity_desc">Quantity: High to Low</option>
-                            <option value="name_asc">Name: A to Z</option>
-                            <option value="name_desc">Name: Z to A</option>
-                            <option value="id_asc">ID: A to Z</option>
-                            <option value="id_desc">ID: Z to A</option>
-                        </select>
-                    </div>
-                    <div class="col-lg-3">
-                        <select class="form-select" id="categoryFilterSelect">
-                            <option value="" selected>All Categories</option>
-                            <!-- Categories will be loaded here -->
-                        </select>
+            <div class="card-header">
+                <h3 class="mb-0" id="filterSortHeading">
+                    <a href="#filterSortCollapse" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="filterSortCollapse" class="d-flex justify-content-between align-items-center text-body text-decoration-none">
+                        Filter & Sort
+                        <i class="fa-solid fa-chevron-down collapse-icon"></i>
+                    </a>
+                </h3>
+            </div>
+            <div id="filterSortCollapse" class="collapse show" aria-labelledby="filterSortHeading">
+                <div class="card-body">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-lg-6">
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search by product name...">
+                        </div>
+                        <div class="col-lg-3">
+                            <select class="form-select" id="sortSelect">
+                                <option selected disabled>Sort by...</option>
+                                <option value="price_asc">Price: Low to High</option>
+                                <option value="price_desc">Price: High to Low</option>
+                                <option value="quantity_asc">Quantity: Low to High</option>
+                                <option value="quantity_desc">Quantity: High to Low</option>
+                                <option value="name_asc">Name: A to Z</option>
+                                <option value="name_desc">Name: Z to A</option>
+                                <option value="id_asc">ID: A to Z</option>
+                                <option value="id_desc">ID: Z to A</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-3">
+                            <select class="form-select" id="categoryFilterSelect">
+                                <option value="" selected>All Categories</option>
+                                <!-- Categories will be loaded here -->
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -93,24 +113,31 @@
         <!-- Product Table -->
         <section class="card">
             <div class="card-header">
-                <h3>Product List</h3>
+                <h3 class="mb-0" id="productListHeading">
+                    <a href="#productListCollapse" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="productListCollapse" class="d-flex justify-content-between align-items-center text-body text-decoration-none">
+                        Product List
+                        <i class="fa-solid fa-chevron-down collapse-icon"></i>
+                    </a>
+                </h3>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="productsTable">
-                        <thead class="table-dark">
-                            <tr>
-                                <th class="d-none d-md-table-cell">ID</th>
-                                <th>Name</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
-                                <th class="d-none d-md-table-cell">Category</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Products will be loaded here -->
-                        </tbody>
-                    </table>
+            <div id="productListCollapse" class="collapse show" aria-labelledby="productListHeading">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover mb-0" id="productsTable">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th class="d-none d-md-table-cell">ID</th>
+                                    <th>Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th class="d-none d-md-table-cell">Category</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Products will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </section>
@@ -269,62 +296,69 @@
         
         <!-- Add Product Form -->
         <section class="card mt-4">
-            <div class="card-header">
-                <h3>Add New Product</h3>
+            <div class="card-header" id="addProductHeading">
+                <h3 class="mb-0">
+                    <a href="#addProductCollapse" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="addProductCollapse" class="d-flex justify-content-between align-items-center text-body text-decoration-none">
+                        Add New Product
+                        <i class="fa-solid fa-chevron-down collapse-icon"></i>
+                    </a>
+                </h3>
             </div>
-            <div class="card-body">
-                <form id="addProductForm">
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fa-solid fa-barcode fa-fw"></i></span>
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="itemId" placeholder="e.g., SKU123" required>
-                                    <label for="itemId">Product Code</label>
+            <div id="addProductCollapse" class="collapse" aria-labelledby="addProductHeading">
+                <div class="card-body">
+                    <form id="addProductForm">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-barcode fa-fw"></i></span>
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="itemId" placeholder="e.g., SKU123" required>
+                                        <label for="itemId">Product Code</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-tag fa-fw"></i></span>
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="name" placeholder="e.g., Wireless Mouse" required>
+                                        <label for="name">Product Name</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fa-solid fa-tag fa-fw"></i></span>
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="name" placeholder="e.g., Wireless Mouse" required>
-                                    <label for="name">Product Name</label>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-cubes fa-fw"></i></span>
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control" id="quantity" placeholder="e.g., 50" required min="0">
+                                        <label for="quantity">Quantity</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-money-bills fa-fw"></i></span>
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control" id="price" placeholder="e.g., 29.99" step="0.01" required min="0">
+                                        <label for="price">Price</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-bookmark fa-fw"></i></span>
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="category" placeholder="e.g., Electronics" required>
+                                        <label for="category">Category</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-4">
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fa-solid fa-cubes fa-fw"></i></span>
-                                <div class="form-floating">
-                                    <input type="number" class="form-control" id="quantity" placeholder="e.g., 50" required min="0">
-                                    <label for="quantity">Quantity</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fa-solid fa-money-bills fa-fw"></i></span>
-                                <div class="form-floating">
-                                    <input type="number" class="form-control" id="price" placeholder="e.g., 29.99" step="0.01" required min="0">
-                                    <label for="price">Price</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fa-solid fa-bookmark fa-fw"></i></span>
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="category" placeholder="e.g., Electronics" required>
-                                    <label for="category">Category</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100 mt-3">Add Product</button>
-                </form>
+                        <button type="submit" class="btn btn-primary w-100 mt-3">Add Product</button>
+                    </form>
+                </div>
             </div>
         </section>
     </main>

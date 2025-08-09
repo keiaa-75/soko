@@ -2,6 +2,7 @@
 const BASE_CURRENCY = 'PHP';
 let selectedCurrency = localStorage.getItem('soko-currency') || BASE_CURRENCY;
 let exchangeRates = {};
+let productListCollapse;
 
 async function fetchRates() {
     try {
@@ -174,6 +175,10 @@ function buildFilterQueryString() {
 }
 
 function applyFiltersAndFetch() {
+    // Ensure the product list is visible when filters are applied
+    if (productListCollapse) {
+        productListCollapse.show();
+    }
     const queryString = buildFilterQueryString();
     fetchProducts(queryString ? `?${queryString}` : '');
 }
@@ -184,6 +189,14 @@ function exportToCsv() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // --- Collapse Setup ---
+    const productListCollapseEl = document.getElementById('productListCollapse');
+    if (productListCollapseEl) {
+        productListCollapse = new bootstrap.Collapse(productListCollapseEl, {
+            toggle: false // Do not toggle on initialization
+        });
+    }
+
     // --- Currency Setup ---
     const currencyLabel = document.getElementById('currency-label');
     if (currencyLabel) currencyLabel.textContent = selectedCurrency;
