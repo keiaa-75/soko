@@ -5,18 +5,12 @@ async function fetchProducts(params = '') {
         const products = await res.json();
         const tbody = document.querySelector('#productsTable tbody');
         const rows = products.map(prod => `
-                <tr>
+                <tr class="product-row" onclick="showEditModal(${prod.id})">
                     <td>${prod.itemId}</td>
                     <td>${prod.itemName}</td>
                     <td>${prod.itemQty}</td>
                     <td>${prod.itemPrice.toFixed(2)}</td>
                     <td>${prod.itemCategory}</td>
-                    <td>
-                        <div class="d-flex flex-column flex-md-row gap-2">
-                            <button class="btn btn-warning btn-sm" onclick="showEditModal(${prod.id})">Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteProduct(${prod.id})">Delete</button>
-                        </div>
-                    </td>
                 </tr>
             `).join('');
         tbody.innerHTML = rows;
@@ -50,10 +44,9 @@ async function addProduct(e) {
 }
 
 async function deleteProduct(id) {
-    if (confirm('Are you sure you want to delete this product?')) {
-        await fetch(`/api/products/${id}`, { method: 'DELETE' });
-        applyFiltersAndFetch(); // Refresh with current filters
-    }
+    // The browser confirm is removed. Confirmation is now handled by a Bootstrap modal.
+    await fetch(`/api/products/${id}`, { method: 'DELETE' });
+    applyFiltersAndFetch(); // Refresh with current filters
 }
 
 // Edit modal logic (implement modal in HTML)
@@ -163,6 +156,32 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('editProductForm').addEventListener('submit', saveProductChanges);
     document.getElementById('printBtn').addEventListener('click', () => window.print());
     document.getElementById('exportBtn').addEventListener('click', exportToCsv);
+
+    document.getElementById('deleteProductFromModalBtn').addEventListener('click', () => {
+        const id = document.getElementById('editProductId').value;
+        if (!id) return;
+
+        // Get modal instances
+        const editModalEl = document.getElementById('editProductModal');
+        const editModal = bootstrap.Modal.getInstance(editModalEl);
+        const deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+
+        // Pass the product ID to the confirmation modal's delete button
+        document.getElementById('confirmDeleteBtn').dataset.productId = id;
+        
+        // Hide the edit modal and show the confirmation modal
+        if (editModal) editModal.hide();
+        deleteConfirmModal.show();
+    });
+
+    document.getElementById('confirmDeleteBtn').addEventListener('click', (e) => {
+        const id = e.target.dataset.productId;
+        if (!id) return;
+
+        const deleteConfirmModal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
+        deleteProduct(id);
+        if (deleteConfirmModal) deleteConfirmModal.hide();
+    });
 
     // --- Theme Toggling Logic ---
     const themingSwitcher = document.getElementById('themingSwitcher');
