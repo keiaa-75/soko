@@ -1,5 +1,5 @@
 // --- Currency Conversion ---
-const BASE_CURRENCY = 'USD';
+const BASE_CURRENCY = 'PHP';
 let selectedCurrency = localStorage.getItem('soko-currency') || BASE_CURRENCY;
 let exchangeRates = {};
 
@@ -185,8 +185,8 @@ function exportToCsv() {
 
 document.addEventListener('DOMContentLoaded', async () => {
     // --- Currency Setup ---
-    const currencyDropdownLabel = document.getElementById('currencySelectorDropdown');
-    currencyDropdownLabel.innerHTML = `<i class="fa-solid fa-money-bill-wave"></i> ${selectedCurrency}`;
+    const currencyLabel = document.getElementById('currency-label');
+    if (currencyLabel) currencyLabel.textContent = selectedCurrency;
     await fetchRates(); // Fetch rates before loading products
 
     document.querySelectorAll('.currency-select').forEach(item => {
@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             e.preventDefault();
             selectedCurrency = e.target.dataset.currency;
             localStorage.setItem('soko-currency', selectedCurrency);
-            currencyDropdownLabel.innerHTML = `<i class="fa-solid fa-money-bill-wave"></i> ${selectedCurrency}`;
+            if (currencyLabel) currencyLabel.textContent = selectedCurrency;
             applyFiltersAndFetch(); // Re-render table with new currency
         });
     });
