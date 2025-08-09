@@ -1,18 +1,56 @@
+// --- Currency Conversion ---
+const BASE_CURRENCY = 'USD';
+let selectedCurrency = localStorage.getItem('soko-currency') || BASE_CURRENCY;
+let exchangeRates = {};
+
+async function fetchRates() {
+    try {
+        // Using a free, no-key-required API for exchange rates
+        const response = await fetch(`https://open.er-api.com/v6/latest/${BASE_CURRENCY}`);
+        if (!response.ok) throw new Error('Failed to fetch exchange rates.');
+        const data = await response.json();
+        if (data.result === 'error') throw new Error(data['error-type']);
+        exchangeRates = data.rates;
+    } catch (error) {
+        console.error("Currency Error:", error);
+        // Fallback to no conversion if API fails
+        exchangeRates[BASE_CURRENCY] = 1;
+    }
+}
+
+function convertFromBase(priceInBase) {
+    const rate = exchangeRates[selectedCurrency] || 1;
+    return priceInBase * rate;
+}
+
+function convertToBase(priceInSelected) {
+    const rate = exchangeRates[selectedCurrency] || 1;
+    return priceInSelected / rate;
+}
+
+function formatCurrency(value) {
+    return new Intl.NumberFormat(navigator.language, {
+        style: 'currency',
+        currency: selectedCurrency
+    }).format(value);
+}
+
 async function fetchProducts(params = '') {
     try {
         const res = await fetch('/api/products' + params);
         if (!res.ok) throw new Error(`Failed to fetch products: ${res.statusText}`);
         const products = await res.json();
         const tbody = document.querySelector('#productsTable tbody');
-        const rows = products.map(prod => `
-                <tr class="product-row" onclick="showEditModal(${prod.id})">
+        const rows = products.map(prod => {
+            const displayPrice = convertFromBase(prod.itemPrice);
+            return `<tr class="product-row" onclick="showEditModal(${prod.id})">
                     <td class="d-none d-md-table-cell">${prod.itemId}</td>
                     <td>${prod.itemName}</td>
                     <td>${prod.itemQty}</td>
-                    <td>${prod.itemPrice.toFixed(2)}</td>
+                    <td>${formatCurrency(displayPrice)}</td>
                     <td class="d-none d-md-table-cell">${prod.itemCategory}</td>
                 </tr>
-            `).join('');
+            `}).join('');
         tbody.innerHTML = rows;
     } catch (error) {
         console.error("Error fetching products:", error);
@@ -27,7 +65,8 @@ async function addProduct(e) {
     const itemId = document.getElementById('itemId').value;
     const itemName = document.getElementById('name').value;
     const itemQty = document.getElementById('quantity').value;
-    const itemPrice = document.getElementById('price').value;
+    const itemPriceInSelectedCurrency = parseFloat(document.getElementById('price').value);
+    const itemPrice = convertToBase(itemPriceInSelectedCurrency); // Convert back to base currency for storage
     const itemCategory = document.getElementById('category').value;
     try {
         await fetch('/api/products', {
@@ -58,7 +97,7 @@ async function showEditModal(id) {
     document.getElementById('editItemId').value = product.itemId;
     document.getElementById('editName').value = product.itemName;
     document.getElementById('editQuantity').value = product.itemQty;
-    document.getElementById('editPrice').value = product.itemPrice;
+    document.getElementById('editPrice').value = convertFromBase(product.itemPrice).toFixed(2);
     document.getElementById('editCategory').value = product.itemCategory;
 
     const editProductModal = new bootstrap.Modal(document.getElementById('editProductModal'));
@@ -71,8 +110,9 @@ async function saveProductChanges(e) {
     const itemId = document.getElementById('editItemId').value;
     const itemName = document.getElementById('editName').value;
     const itemQty = document.getElementById('editQuantity').value;
-    const itemPrice = document.getElementById('editPrice').value;
+    const itemPriceInSelectedCurrency = parseFloat(document.getElementById('editPrice').value);
     const itemCategory = document.getElementById('editCategory').value;
+    const itemPrice = convertToBase(itemPriceInSelectedCurrency); // Convert back to base currency
 
     await fetch(`/api/products/${id}`, {
         method: 'PUT',
@@ -143,8 +183,24 @@ function exportToCsv() {
     window.location.href = `/api/products/export${queryString ? `?${queryString}` : ''}`;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    applyFiltersAndFetch(); // Initial fetch with default filters
+document.addEventListener('DOMContentLoaded', async () => {
+    // --- Currency Setup ---
+    const currencyDropdownLabel = document.getElementById('currencySelectorDropdown');
+    currencyDropdownLabel.innerHTML = `<i class="fa-solid fa-money-bill-wave"></i> ${selectedCurrency}`;
+    await fetchRates(); // Fetch rates before loading products
+
+    document.querySelectorAll('.currency-select').forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            selectedCurrency = e.target.dataset.currency;
+            localStorage.setItem('soko-currency', selectedCurrency);
+            currencyDropdownLabel.innerHTML = `<i class="fa-solid fa-money-bill-wave"></i> ${selectedCurrency}`;
+            applyFiltersAndFetch(); // Re-render table with new currency
+        });
+    });
+
+    // --- Initial Data Load ---
+    applyFiltersAndFetch();
     populateCategories();
 
     // Centralize event handling
