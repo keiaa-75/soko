@@ -1,24 +1,57 @@
+// --- Currency Conversion ---
+const BASE_CURRENCY = 'PHP';
+let selectedCurrency = localStorage.getItem('soko-currency') || BASE_CURRENCY;
+let exchangeRates = {};
+let productListCollapse;
+
+async function fetchRates() {
+    try {
+        // Using a free, no-key-required API for exchange rates
+        const response = await fetch(`https://open.er-api.com/v6/latest/${BASE_CURRENCY}`);
+        if (!response.ok) throw new Error('Failed to fetch exchange rates.');
+        const data = await response.json();
+        if (data.result === 'error') throw new Error(data['error-type']);
+        exchangeRates = data.rates;
+    } catch (error) {
+        console.error("Currency Error:", error);
+        // Fallback to no conversion if API fails
+        exchangeRates[BASE_CURRENCY] = 1;
+    }
+}
+
+function convertFromBase(priceInBase) {
+    const rate = exchangeRates[selectedCurrency] || 1;
+    return priceInBase * rate;
+}
+
+function convertToBase(priceInSelected) {
+    const rate = exchangeRates[selectedCurrency] || 1;
+    return priceInSelected / rate;
+}
+
+function formatCurrency(value) {
+    return new Intl.NumberFormat(navigator.language, {
+        style: 'currency',
+        currency: selectedCurrency
+    }).format(value);
+}
+
 async function fetchProducts(params = '') {
     try {
         const res = await fetch('/api/products' + params);
         if (!res.ok) throw new Error(`Failed to fetch products: ${res.statusText}`);
         const products = await res.json();
         const tbody = document.querySelector('#productsTable tbody');
-        const rows = products.map(prod => `
-                <tr>
-                    <td>${prod.itemId}</td>
+        const rows = products.map(prod => {
+            const displayPrice = convertFromBase(prod.itemPrice);
+            return `<tr class="product-row" onclick="showEditModal(${prod.id})">
+                    <td class="d-none d-md-table-cell">${prod.itemId}</td>
                     <td>${prod.itemName}</td>
                     <td>${prod.itemQty}</td>
-                    <td>${prod.itemPrice.toFixed(2)}</td>
-                    <td>${prod.itemCategory}</td>
-                    <td>
-                        <div class="d-flex flex-column flex-md-row gap-2">
-                            <button class="btn btn-warning btn-sm" onclick="showEditModal(${prod.id})">Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteProduct(${prod.id})">Delete</button>
-                        </div>
-                    </td>
+                    <td>${formatCurrency(displayPrice)}</td>
+                    <td class="d-none d-md-table-cell">${prod.itemCategory}</td>
                 </tr>
-            `).join('');
+            `}).join('');
         tbody.innerHTML = rows;
     } catch (error) {
         console.error("Error fetching products:", error);
@@ -33,7 +66,8 @@ async function addProduct(e) {
     const itemId = document.getElementById('itemId').value;
     const itemName = document.getElementById('name').value;
     const itemQty = document.getElementById('quantity').value;
-    const itemPrice = document.getElementById('price').value;
+    const itemPriceInSelectedCurrency = parseFloat(document.getElementById('price').value);
+    const itemPrice = convertToBase(itemPriceInSelectedCurrency); // Convert back to base currency for storage
     const itemCategory = document.getElementById('category').value;
     try {
         await fetch('/api/products', {
@@ -50,10 +84,9 @@ async function addProduct(e) {
 }
 
 async function deleteProduct(id) {
-    if (confirm('Are you sure you want to delete this product?')) {
-        await fetch(`/api/products/${id}`, { method: 'DELETE' });
-        applyFiltersAndFetch(); // Refresh with current filters
-    }
+    // The browser confirm is removed. Confirmation is now handled by a Bootstrap modal.
+    await fetch(`/api/products/${id}`, { method: 'DELETE' });
+    applyFiltersAndFetch(); // Refresh with current filters
 }
 
 // Edit modal logic (implement modal in HTML)
@@ -65,7 +98,7 @@ async function showEditModal(id) {
     document.getElementById('editItemId').value = product.itemId;
     document.getElementById('editName').value = product.itemName;
     document.getElementById('editQuantity').value = product.itemQty;
-    document.getElementById('editPrice').value = product.itemPrice;
+    document.getElementById('editPrice').value = convertFromBase(product.itemPrice).toFixed(2);
     document.getElementById('editCategory').value = product.itemCategory;
 
     const editProductModal = new bootstrap.Modal(document.getElementById('editProductModal'));
@@ -78,8 +111,9 @@ async function saveProductChanges(e) {
     const itemId = document.getElementById('editItemId').value;
     const itemName = document.getElementById('editName').value;
     const itemQty = document.getElementById('editQuantity').value;
-    const itemPrice = document.getElementById('editPrice').value;
+    const itemPriceInSelectedCurrency = parseFloat(document.getElementById('editPrice').value);
     const itemCategory = document.getElementById('editCategory').value;
+    const itemPrice = convertToBase(itemPriceInSelectedCurrency); // Convert back to base currency
 
     await fetch(`/api/products/${id}`, {
         method: 'PUT',
@@ -141,6 +175,10 @@ function buildFilterQueryString() {
 }
 
 function applyFiltersAndFetch() {
+    // Ensure the product list is visible when filters are applied
+    if (productListCollapse) {
+        productListCollapse.show();
+    }
     const queryString = buildFilterQueryString();
     fetchProducts(queryString ? `?${queryString}` : '');
 }
@@ -150,8 +188,32 @@ function exportToCsv() {
     window.location.href = `/api/products/export${queryString ? `?${queryString}` : ''}`;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    applyFiltersAndFetch(); // Initial fetch with default filters
+document.addEventListener('DOMContentLoaded', async () => {
+    // --- Collapse Setup ---
+    const productListCollapseEl = document.getElementById('productListCollapse');
+    if (productListCollapseEl) {
+        productListCollapse = new bootstrap.Collapse(productListCollapseEl, {
+            toggle: false // Do not toggle on initialization
+        });
+    }
+
+    // --- Currency Setup ---
+    const currencyLabel = document.getElementById('currency-label');
+    if (currencyLabel) currencyLabel.textContent = selectedCurrency;
+    await fetchRates(); // Fetch rates before loading products
+
+    document.querySelectorAll('.currency-select').forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            selectedCurrency = e.target.dataset.currency;
+            localStorage.setItem('soko-currency', selectedCurrency);
+            if (currencyLabel) currencyLabel.textContent = selectedCurrency;
+            applyFiltersAndFetch(); // Re-render table with new currency
+        });
+    });
+
+    // --- Initial Data Load ---
+    applyFiltersAndFetch();
     populateCategories();
 
     // Centralize event handling
@@ -161,8 +223,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('addProductForm').addEventListener('submit', addProduct);
     document.getElementById('editProductForm').addEventListener('submit', saveProductChanges);
-    document.getElementById('printBtn').addEventListener('click', () => window.print());
+    document.getElementById('printBtn').addEventListener('click', () => {
+        const productListCollapseEl = document.getElementById('productListCollapse');
+        if (!productListCollapseEl) {
+            window.print(); // Failsafe if the element doesn't exist
+            return;
+        }
+
+        // If the list is already visible, print immediately.
+        if (productListCollapseEl.classList.contains('show')) {
+            window.print();
+        } else {
+            // If it's hidden, listen for it to become visible, then print.
+            const handlePrintOnShow = () => {
+                window.print();
+                // Clean up the event listener to prevent it from firing again.
+                productListCollapseEl.removeEventListener('shown.bs.collapse', handlePrintOnShow);
+            };
+            productListCollapseEl.addEventListener('shown.bs.collapse', handlePrintOnShow);
+
+            // Trigger the show action.
+            if (productListCollapse) productListCollapse.show();
+        }
+    });
     document.getElementById('exportBtn').addEventListener('click', exportToCsv);
+
+    document.getElementById('deleteProductFromModalBtn').addEventListener('click', () => {
+        const id = document.getElementById('editProductId').value;
+        if (!id) return;
+
+        // Get modal instances
+        const editModalEl = document.getElementById('editProductModal');
+        const editModal = bootstrap.Modal.getInstance(editModalEl);
+        const deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+
+        // Pass the product ID to the confirmation modal's delete button
+        document.getElementById('confirmDeleteBtn').dataset.productId = id;
+        
+        // Hide the edit modal and show the confirmation modal
+        if (editModal) editModal.hide();
+        deleteConfirmModal.show();
+    });
+
+    document.getElementById('confirmDeleteBtn').addEventListener('click', (e) => {
+        const id = e.target.dataset.productId;
+        if (!id) return;
+
+        const deleteConfirmModal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
+        deleteProduct(id);
+        if (deleteConfirmModal) deleteConfirmModal.hide();
+    });
 
     // --- Theme Toggling Logic ---
     const themingSwitcher = document.getElementById('themingSwitcher');
