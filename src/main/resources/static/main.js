@@ -223,7 +223,29 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('addProductForm').addEventListener('submit', addProduct);
     document.getElementById('editProductForm').addEventListener('submit', saveProductChanges);
-    document.getElementById('printBtn').addEventListener('click', () => window.print());
+    document.getElementById('printBtn').addEventListener('click', () => {
+        const productListCollapseEl = document.getElementById('productListCollapse');
+        if (!productListCollapseEl) {
+            window.print(); // Failsafe if the element doesn't exist
+            return;
+        }
+
+        // If the list is already visible, print immediately.
+        if (productListCollapseEl.classList.contains('show')) {
+            window.print();
+        } else {
+            // If it's hidden, listen for it to become visible, then print.
+            const handlePrintOnShow = () => {
+                window.print();
+                // Clean up the event listener to prevent it from firing again.
+                productListCollapseEl.removeEventListener('shown.bs.collapse', handlePrintOnShow);
+            };
+            productListCollapseEl.addEventListener('shown.bs.collapse', handlePrintOnShow);
+
+            // Trigger the show action.
+            if (productListCollapse) productListCollapse.show();
+        }
+    });
     document.getElementById('exportBtn').addEventListener('click', exportToCsv);
 
     document.getElementById('deleteProductFromModalBtn').addEventListener('click', () => {
