@@ -6,11 +6,11 @@ async function fetchProducts(params = '') {
         const tbody = document.querySelector('#productsTable tbody');
         const rows = products.map(prod => `
                 <tr class="product-row" onclick="showEditModal(${prod.id})">
-                    <td>${prod.itemId}</td>
+                    <td class="d-none d-md-table-cell">${prod.itemId}</td>
                     <td>${prod.itemName}</td>
                     <td>${prod.itemQty}</td>
                     <td>${prod.itemPrice.toFixed(2)}</td>
-                    <td>${prod.itemCategory}</td>
+                    <td class="d-none d-md-table-cell">${prod.itemCategory}</td>
                 </tr>
             `).join('');
         tbody.innerHTML = rows;
