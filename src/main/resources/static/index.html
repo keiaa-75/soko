@@ -128,25 +128,40 @@
                     <div class="modal-body">
                         <form id="editProductForm">
                             <input type="hidden" id="editProductId">
-                            <div class="mb-3">
-                                <label for="editItemId" class="form-label">Product Code</label>
-                                <input type="text" class="form-control" id="editItemId" required>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text"><i class="fa-solid fa-barcode fa-fw"></i></span>
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="editItemId" placeholder="Product Code" required>
+                                    <label for="editItemId">Product Code</label>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="editName" class="form-label">Product Name</label>
-                                <input type="text" class="form-control" id="editName" required>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text"><i class="fa-solid fa-tag fa-fw"></i></span>
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="editName" placeholder="Product Name" required>
+                                    <label for="editName">Product Name</label>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="editQuantity" class="form-label">Quantity</label>
-                                <input type="number" class="form-control" id="editQuantity" required min="0">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text"><i class="fa-solid fa-cubes fa-fw"></i></span>
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="editQuantity" placeholder="Quantity" required min="0">
+                                    <label for="editQuantity">Quantity</label>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="editPrice" class="form-label">Price</label>
-                                <input type="number" class="form-control" id="editPrice" step="0.01" required min="0">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text"><i class="fa-solid fa-dollar-sign fa-fw"></i></span>
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="editPrice" placeholder="Price" step="0.01" required min="0">
+                                    <label for="editPrice">Price</label>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="editCategory" class="form-label">Category</label>
-                                <input type="text" class="form-control" id="editCategory" required>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text"><i class="fa-solid fa-bookmark fa-fw"></i></span>
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="editCategory" placeholder="Category" required>
+                                    <label for="editCategory">Category</label>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -189,26 +204,51 @@
                 <form id="addProductForm">
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <label for="itemId" class="form-label">Product Code</label>
-                            <input type="text" class="form-control" id="itemId" placeholder="e.g., SKU123" required>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-barcode fa-fw"></i></span>
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="itemId" placeholder="e.g., SKU123" required>
+                                    <label for="itemId">Product Code</label>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <label for="name" class="form-label">Product Name</label>
-                            <input type="text" class="form-control" id="name" placeholder="e.g., Wireless Mouse" required>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-tag fa-fw"></i></span>
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="name" placeholder="e.g., Wireless Mouse" required>
+                                    <label for="name">Product Name</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row g-3 mb-3">
                         <div class="col-md-4">
-                            <label for="quantity" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" id="quantity" placeholder="e.g., 50" required min="0">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-cubes fa-fw"></i></span>
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="quantity" placeholder="e.g., 50" required min="0">
+                                    <label for="quantity">Quantity</label>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-4">
-                            <label for="price" class="form-label">Price</label>
-                            <input type="number" class="form-control" id="price" placeholder="e.g., 29.99" step="0.01" required min="0">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-dollar-sign fa-fw"></i></span>
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="price" placeholder="e.g., 29.99" step="0.01" required min="0">
+                                    <label for="price">Price</label>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-4">
-                            <label for="category" class="form-label">Category</label>
-                            <input type="text" class="form-control" id="category" placeholder="e.g., Electronics" required>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-bookmark fa-fw"></i></span>
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="category" placeholder="e.g., Electronics" required>
+                                    <label for="category">Category</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary w-100 mt-3">Add Product</button>
