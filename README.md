@@ -40,8 +40,8 @@ Follow these instructions to get a copy of the project up and running on your lo
     ```
 
     On Windows:
-    ```sh
-    mvnw.cmd spring-boot:run
+    ```powershell
+    .\mvnw.cmd spring-boot:run
     ```
 
 3.  **Access the application:**
