@@ -1,131 +1,59 @@
 # Sōko
 
-**Sōko** (倉庫) means "warehouse" in Japanese. I'm out of name ideas.
+<p align="center">
+    <img alt = "Spring Framework" src="https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white"/>
+    <img alt = "Bootstrap" src="https://img.shields.io/badge/bootstrap-%238511FA.svg?style=for-the-badge&logo=bootstrap&logoColor=white"/>
+    <img alt = "JavaScript" src="https://img.shields.io/badge/javascript-%23F7DF1E.svg?style=for-the-badge&logo=javascript&logoColor=%23323330"/>
+    <img alt = "Hibernate ORM" src="https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=Hibernate&logoColor=white"/>
+    <img alt = "Java" src="https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white"/>
+</p>
 
 ![Sōko running on the browser](program-screenshot.png)
 
-This is a simple, responsive web application for managing a product inventory. It is built with Spring Boot, H2 Database, JavaScript, and Bootstrap 5. The project demonstrates a full-stack application with RESTful API services and a mobile-first user interface.
+**Sōko** (倉庫) means "warehouse" in Japanese. This is a simple, responsive web application for managing a product inventory. The project demonstrates a full-stack application with [RESTful API](endpoints.md) services and a mobile-first user interface.
 
 ## Features
 
-- **View Products**: See a complete list of all products in the inventory.
-- **Add Products**: Add new products through a simple form.
-- **Delete Products**: Remove products from the inventory.
+- **Manage Products**: Add, remove, and edit products through a simple form.
 - **Search**: Dynamically search for products by name.
 - **Sort**: Sort the product list by ID, name, or price.
 - **Filter**: Filter products by category.
+- **Automatic Currency Conversion**: Convert product prices to different currencies.
+- **Export to CSV**: Export the product list to a CSV file.
+- **Print Product List**: Print the product list directly from the browser.
 
 ## Getting Started
 
-Follow these instructions to get a copy of the project up and running on your local machine.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 
-- Java Development Kit (JDK) 17 or later.
-- Apache Maven.
+- Java Development Kit (JDK) 17 or higher
+- Apache Maven 3.6.0 or higher
 
-### Installation & Running
+**1. Clone the repository:**
 
-1.  **Clone the repository:**
-    ```sh
-    git clone https://github.com/nozomi-75/soko.git
-    cd soko
-    ```
-
-2.  **Run the application using the Maven wrapper:**
-
-    On macOS/Linux:
-    ```sh
-    ./mvnw spring-boot:run
-    ```
-
-    On Windows:
-    ```powershell
-    .\mvnw.cmd spring-boot:run
-    ```
-
-3.  **Access the application:**
-    Open your web browser and navigate to `http://localhost:9090`.
-
-## API Endpoints
-
-The backend exposes RESTful endpoints under the base path `/api/products`. The following sections detail each available endpoint and provide `curl` examples for testing.
-
----
-
-### `GET /api/products`
-
-Retrieves a list of all products. This endpoint can be used alone to fetch all products or combined with the following query parameters for powerful and flexible queries.
-
-**`curl` Example (Get All):**
-```bash
-curl -X GET http://localhost:9090/api/products
+```sh
+git clone https://github.com/keiaa-75/soko.git
+cd soko
 ```
 
-**Query Parameters**
+**2. Build the project:**
 
-| Parameter   | Example                 | Description                                                                    |
-|-------------|-------------------------|--------------------------------------------------------------------------------|
-| `name`      | `?name=Book`            | Search for products where the name contains the given string (case-insensitive). |
-| `category`  | `?category=Electronics` | Filter products by an exact category match.                                    |
-| `minPrice`  | `?minPrice=50`          | Filter for products with a price greater than or equal to this value.          |
-| `maxPrice`  | `?maxPrice=200`         | Filter for products with a price less than or equal to this value.             |
-| `sortBy`    | `?sortBy=price`         | The field to sort by. Valid options: `id`, `name`, `price`, `quantity`. Defaults to `id`. |
-| `sortOrder` | `?sortOrder=desc`       | The sort direction. Valid options: `asc` (default), `desc`.                    |
-
-**Example of a Combined Query**
-
-To find all products in the "Books" category with "Java" in their name, priced under $50, and sorted by price in ascending order, you would use the following request:
-
-**`curl` Example (Combined Query):**
-```bash
-curl -X GET "http://localhost:9090/api/products?name=Java&category=Books&maxPrice=50&sortBy=price&sortOrder=asc"
+```sh
+mvn clean install
 ```
 
----
+**3. Run the application:**
 
-### `GET /api/products/{id}`
+From your IDE, you can run the `SokoApplication.java` file as a Spring Boot app. Alternatively, you can use the command line:
 
-Retrieves a specific product by its unique ID.
-
-**`curl` Example (Get Product with ID 1):**
-```bash
-curl -X GET http://localhost:9090/api/products/1
+```sh
+mvn spring-boot:run
 ```
 
----
+The application will start on port `9090`.
 
-### `POST /api/products`
+## License
 
-Adds a new product to the inventory. The product details must be provided in the request body as a JSON object.
-
-**`curl` Example:**
-```bash
-curl -X POST -H "Content-Type: application/json" \
--d '{"itemId": "SKU-101", "itemName": "New Gadget", "itemQty": 50, "itemPrice": 99.99, "itemCategory": "Electronics"}' \
-http://localhost:9090/api/products
-```
-
----
-
-### `PUT /api/products/{id}`
-
-Updates the details of an existing product by its ID. The updated product details must be provided in the request body as a JSON object.
-
-**`curl` Example (Update Product with ID 1):**
-```bash
-curl -X PUT -H "Content-Type: application/json" \
--d '{"itemName": "Updated Gadget", "itemQty": 45, "itemPrice": 95.50, "itemCategory": "Tech"}' \
-http://localhost:9090/api/products/1
-```
-
----
-
-### `DELETE /api/products/{id}`
-
-Removes a product from the inventory by its ID.
-
-**`curl` Example (Delete Product with ID 1):**
-```bash
-curl -X DELETE http://localhost:9090/api/products/1
-```
+This repository is licensed under MIT License. Please refer to the [LICENSE](LICENSE) file for full details. Other resources included, such as images, are licensed under [Creative Commons Attribution Non-Commercial Share-Alike 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/).
