@@ -12,6 +12,8 @@
 
 **Sōko** (倉庫) means "warehouse" in Japanese. This is a simple, responsive web application for managing a product inventory. The project demonstrates a full-stack application with [RESTful API](endpoints.md) services and a mobile-first user interface.
 
+This is for learning purposes only, specifically designed for those new to Spring Boot and full-stack development. Do not use it for production.
+
 ## Features
 
 - **Manage Products**: Add, remove, and edit products through a simple form.
